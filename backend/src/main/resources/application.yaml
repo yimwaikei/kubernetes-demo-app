@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: demo-backend
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/mydatabase}
+    username: ${DB_USERNAME:myuser}
+    password: ${DB_PASSWORD:mypassword}
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: false
