@@ -6,5 +6,11 @@ spring:
     username: ${DB_USERNAME:myuser}
     password: ${DB_PASSWORD:mypassword}
     driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
   flyway:
-    enabled: false
+    baselineOnMigrate: true
+    enabled: true
+    locations: classpath:db/migration
