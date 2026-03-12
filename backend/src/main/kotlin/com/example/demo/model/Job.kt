@@ -3,23 +3,25 @@ package com.example.demo.model
 import jakarta.persistence.*
 import java.time.Instant
 import java.util.UUID
+import org.hibernate.annotations.DynamicInsert
 
+@DynamicInsert
 @Entity
 @Table(name = "jobs")
 data class Job(
     @Id
     @GeneratedValue
-    @Column(columnDefinition = "uuid")
+    @Column(columnDefinition = "uuid", insertable = false, updatable = false)
     val id: UUID? = null,
 
     @Column(nullable = false, length = 255)
     val name: String = "",
 
     @Column(columnDefinition = "jsonb")
-    val metadata: String = "{}",
+    val metadata: String? = null,
 
     @Column
-    val status: Short = 0,
+    val status: Short? = null,
 
     @Column(name = "start_at")
     val startAt: Instant? = null,

@@ -16,7 +16,7 @@ class JobService(
     }
 
     private fun mapJobToJobDto(job: Job): JobDto {
-        val statusEnum = JobStatus.fromCode(job.status)
+        val statusEnum = JobStatus.fromCode(job.status ?: 0)
         return JobDto(
             id = job.id,
             name = job.name,
