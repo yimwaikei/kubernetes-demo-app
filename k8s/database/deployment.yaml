@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-deployment
+  name: postgres
   namespace: demo
   labels:
-    app: postgres-deployment
+    app: postgres
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres-pod
+      app: postgres
   template:
     metadata:
       labels:
-        app: postgres-pod
+        app: postgres
     spec:
       containers:
-      - name: postgres-container
+      - name: postgres
         image: postgres:17
         env:
         - name: POSTGRES_USER
