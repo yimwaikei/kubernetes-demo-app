@@ -4,7 +4,9 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - secrets/database-secret.yaml
+  - secrets/s3-secret.yaml
   - ingress.yaml
   - database/
   - backend/
   - frontend/
+  - s3/
