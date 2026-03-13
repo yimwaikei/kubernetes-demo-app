@@ -14,10 +14,12 @@ spec:
       labels:
         app: demo-frontend
     spec:
+      imagePullSecrets:
+      - name: ghcr-secret
       containers:
         - name: demo-frontend
-          image: demo-frontend:latest
-          imagePullPolicy: Never
+          image: ghcr.io/yimwaikei/demo-kubernetes-frontend:demo
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
           env:
