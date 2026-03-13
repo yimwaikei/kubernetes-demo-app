@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: frontend-config
 data:
-  VITE_BACKEND_URL: http://demo-backend:8080
+  VITE_BACKEND_URL: http://demo.local
