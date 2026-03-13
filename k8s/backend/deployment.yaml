@@ -36,3 +36,18 @@ spec:
                 secretKeyRef:
                   name: database-secret
                   key: POSTGRES_PASSWORD
+            - name: MINIO_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: MINIO_ENDPOINT
+            - name: MINIO_USER
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secret
+                  key: MINIO_ROOT_USER
+            - name: MINIO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secret
+                  key: MINIO_ROOT_PASSWORD
