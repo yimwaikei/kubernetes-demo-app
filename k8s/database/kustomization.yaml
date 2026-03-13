@@ -4,6 +4,6 @@ kind: Kustomization
 namespace: demo
 
 resources:
-  - postgres-pvc.yaml
+  - pvc.yaml
   - deployment.yaml
   - service.yaml
