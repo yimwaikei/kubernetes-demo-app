@@ -4,3 +4,4 @@ metadata:
   name: backend-config
 data:
   DB_URL: jdbc:postgresql://postgres:5432/mydatabase
+  CORS_ALLOWED_ORIGINS: http://demo-frontend:5173
