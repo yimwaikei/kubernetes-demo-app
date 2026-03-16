@@ -19,13 +19,20 @@ class JobService(
     }
 
     fun createTransformImageJob(filePath: String): UUID? {
+        val metadataMap: Map<String, Any> = mapOf("filePath" to filePath)
+
+        // TODO trigger fire & forget kubernetes job (python script to transform image)
+
+        return createJobRecord(JobName.TRANSFORM_IMAGE.toString(), metadataMap)
+    }
+
+    private fun createJobRecord(name: String, metadataMap: Map<String, Any>): UUID? {
         val mapper = jacksonObjectMapper()
-        val metadataMap = mapOf("filePath" to filePath)
         val metadataJson = mapper.writeValueAsString(metadataMap)
 
         return jobRepository.save(
             Job(
-                name = JobName.TRANSFORM_IMAGE.toString(),
+                name = name,
                 metadata = metadataJson
             )
         ).id
