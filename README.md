@@ -36,6 +36,7 @@ These tools are required to run the project:
 - **pnpm v10.32.1** (package manager)
 - **Docker Desktop** (for containerization)
 - **Minikube** (local Kubernetes cluster; runs nodes as Docker containers)
+- **Python v3.14.3** (for scripting)
 
 ## Tools (Optional / Helpful)
 
@@ -54,5 +55,6 @@ kubernetes-demo-app/
 ├── backend/ # Backend API service (Kotlin/Spring Boot/Maven)
 ├── frontend/ # Web application (React/TypeScript/Vite/Nginx)
 ├── k8s/ # Kubernetes manifests
+├── scripts/ # Scripts for jobs
 └── README.md
 ```
