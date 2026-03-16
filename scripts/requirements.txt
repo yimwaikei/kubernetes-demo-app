@@ -1,0 +1,4 @@
+psycopg2-binary==2.9.9
+opencv-python==4.7.0.72
+numpy==1.26.0
+minio==7.1.2
