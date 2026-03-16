@@ -1,8 +1,11 @@
 package com.example.demo.service
 
 import com.example.demo.config.MinioConfig
+import io.minio.BucketExistsArgs
+import io.minio.MakeBucketArgs
 import io.minio.MinioClient
 import io.minio.PutObjectArgs
+import jakarta.annotation.PostConstruct
 import org.apache.coyote.BadRequestException
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -13,6 +16,27 @@ class FileService(
     private val minioClient: MinioClient,
     private val minioConfig: MinioConfig
 ) {
+
+    @PostConstruct
+    fun initBucket() {
+        val bucketName = minioConfig.defaultBucket
+
+        val exists = minioClient.bucketExists(
+            BucketExistsArgs
+                .builder()
+                .bucket(bucketName)
+                .build()
+        )
+
+        if (!exists) {
+            minioClient.makeBucket(
+                MakeBucketArgs
+                    .builder()
+                    .bucket(bucketName)
+                    .build()
+            )
+        }
+    }
 
     fun uploadFile(file: MultipartFile): String {
         if (!(isFileImage(file))) throw IllegalArgumentException("File image is invalid")
