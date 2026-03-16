@@ -16,6 +16,9 @@ class MinioConfig {
     @Value("\${minio.secret-key}")
     private lateinit var secretKey: String
 
+    @Value("\${minio.default-bucket}")
+    lateinit var defaultBucket: String
+
     @Bean
     fun minioClient(): MinioClient {
         return MinioClient.builder()
