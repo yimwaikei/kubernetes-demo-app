@@ -53,3 +53,8 @@ spec:
                 secretKeyRef:
                   name: s3-secret
                   key: MINIO_ROOT_PASSWORD
+            - name: MINIO_DEFAULT_BUCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: MINIO_DEFAULT_BUCKET

@@ -5,3 +5,4 @@ metadata:
 data:
   DB_URL: jdbc:postgresql://postgres:5432/mydatabase
   MINIO_ENDPOINT: http://minio:9000
+  MINIO_DEFAULT_BUCKET: test-bucket
