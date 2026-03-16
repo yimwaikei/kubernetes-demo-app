@@ -1,9 +1,11 @@
 package com.example.demo.model
 
 import jakarta.persistence.*
+import org.hibernate.annotations.ColumnTransformer
 import java.time.Instant
 import java.util.UUID
 import org.hibernate.annotations.DynamicInsert
+import org.hibernate.annotations.Type
 
 @DynamicInsert
 @Entity
@@ -18,6 +20,7 @@ data class Job(
     val name: String = "",
 
     @Column(columnDefinition = "jsonb")
+    @ColumnTransformer(write = "?::jsonb")
     val metadata: String? = null,
 
     @Column

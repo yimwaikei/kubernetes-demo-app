@@ -11,3 +11,11 @@ data class JobDto(
     val endAt: Instant?,
     val createdAt: Instant
 )
+
+data class CreateJobRequest(
+    val filePath: String,
+)
+
+data class CreateJobResponse(
+    val id: UUID,
+)
