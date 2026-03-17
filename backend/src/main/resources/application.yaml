@@ -21,3 +21,8 @@ minio:
   access-key: ${MINIO_USER:minio99}
   secret-key: ${MINIO_PASSWORD:minio123}
   default-bucket: ${MINIO_DEFAULT_BUCKET:test}
+k8s:
+  namespace: ${K8S_NAMESPACE:demo}
+  job:
+    transform-image:
+      image: ${TRANSFORM_IMAGE_DOCKER_IMAGE:ghcr.io/yimwaikei/demo-kubernetes-scripts:demo}

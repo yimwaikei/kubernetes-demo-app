@@ -3,6 +3,7 @@ package com.example.demo.service
 import com.example.demo.domain.JobName
 import com.example.demo.domain.JobStatus
 import com.example.demo.dto.JobDto
+import com.example.demo.kubernetes.K8sJobComponent
 import com.example.demo.model.Job
 import com.example.demo.repository.JobRepository
 import org.springframework.stereotype.Service
@@ -11,7 +12,8 @@ import java.util.UUID
 
 @Service
 class JobService(
-    private val jobRepository: JobRepository
+    private val jobRepository: JobRepository,
+    private val k8sJobComponent: K8sJobComponent
 ) {
 
     fun findByName(name: String): List<JobDto> {
@@ -21,9 +23,18 @@ class JobService(
     fun createTransformImageJob(filePath: String): UUID? {
         val metadataMap: Map<String, Any> = mapOf("filePath" to filePath)
 
-        // TODO trigger fire & forget kubernetes job (python script to transform image)
+        val jobId = createJobRecord(JobName.TRANSFORM_IMAGE.toString(), metadataMap)
 
-        return createJobRecord(JobName.TRANSFORM_IMAGE.toString(), metadataMap)
+        if (jobId != null) {
+            try {
+                k8sJobComponent.triggerTransformImageJob(jobId.toString())
+            } catch (ex: Exception) {
+                println("Failed to trigger Kubernetes job for $jobId")
+                ex.printStackTrace()
+            }
+        }
+
+        return jobId
     }
 
     private fun createJobRecord(name: String, metadataMap: Map<String, Any>): UUID? {
