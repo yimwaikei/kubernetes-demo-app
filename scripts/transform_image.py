@@ -2,6 +2,7 @@ import io
 import os
 import sys
 import psycopg2
+from psycopg2 import sql
 import cv2
 import numpy as np
 from minio import Minio
@@ -25,11 +26,33 @@ def update_status(record_id, new_status):
     try:
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute("UPDATE jobs SET status = %s WHERE id = %s;", (new_status, record_id))
+
+        if new_status == JobStatus.RUNNING:
+            column = "start_at"
+        elif new_status in (JobStatus.COMPLETED, JobStatus.FAILED):
+            column = "end_at"
+        else:
+            column = None
+
+        if column:
+            query = sql.SQL("""
+                UPDATE jobs
+                SET status = %s,
+                    {} = NOW()
+                WHERE id = %s;
+            """).format(sql.Identifier(column))
+
+            cur.execute(query, (new_status, record_id))
+        else:
+            cur.execute(
+                "UPDATE jobs SET status = %s WHERE id = %s;",
+                (new_status, record_id)
+            )
+
         conn.commit()
         cur.close()
         conn.close()
-        print(f"Record ID {record_id} status updated to {new_status}")
+
     except Exception as e:
         print(f"Failed to update status for record {record_id}: {e}")
 
