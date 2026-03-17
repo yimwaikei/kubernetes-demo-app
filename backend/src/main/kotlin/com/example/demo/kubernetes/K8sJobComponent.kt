@@ -8,26 +8,25 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.jdbc.autoconfigure.DataSourceProperties
 import org.springframework.stereotype.Component
 import java.net.URI
-import java.util.UUID
 
 @Component
 class K8sJobComponent(
     private val dataSourceProperties: DataSourceProperties
 ) {
 
-    @Value("\${k8s.job.transform-image.image}")
+    @Value($$"${k8s.job.transform-image.image}")
     lateinit var transformImageJobImage: String
 
-    @Value("\${minio.endpoint}")
+    @Value($$"${minio.endpoint}")
     lateinit var minioEndpoint: String
 
-    @Value("\${minio.access-key}")
+    @Value($$"${minio.access-key}")
     lateinit var minioUser: String
 
-    @Value("\${minio.secret-key}")
+    @Value($$"${minio.secret-key}")
     lateinit var minioPassword: String
 
-    @Value("\${k8s.namespace}")
+    @Value($$"${k8s.namespace}")
     lateinit var namespace: String
 
     private val kubernetesClient: KubernetesClient = KubernetesClientBuilder().build()
