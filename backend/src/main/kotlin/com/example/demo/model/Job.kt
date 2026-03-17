@@ -34,4 +34,7 @@ data class Job(
 
     @Column(name = "created_at", insertable = false, updatable = false)
     val createdAt: Instant = Instant.now(),
+
+    @Column(columnDefinition = "text")
+    val error: String? = null,
 )

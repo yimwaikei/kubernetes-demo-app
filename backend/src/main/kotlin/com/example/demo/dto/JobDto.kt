@@ -9,7 +9,8 @@ data class JobDto(
     val status: String,
     val startAt: Instant?,
     val endAt: Instant?,
-    val createdAt: Instant
+    val createdAt: Instant,
+    val error: String?,
 )
 
 data class CreateJobRequest(

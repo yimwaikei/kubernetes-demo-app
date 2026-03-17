@@ -58,6 +58,7 @@ class JobService(
             startAt = job.startAt,
             endAt = job.endAt,
             createdAt = job.createdAt,
+            error = job.error,
         )
     }
 }
