@@ -33,7 +33,7 @@ class K8sJobComponent(
     private val kubernetesClient: KubernetesClient = KubernetesClientBuilder().build()
 
     fun triggerTransformImageJob(jobId: String) {
-        val jobName = "python-job-$jobId-${UUID.randomUUID().toString().take(8)}"
+        val jobName = "transform-image-job-$jobId-${UUID.randomUUID().toString().take(8)}"
 
         val db = parseDatabaseConfig()
         val minio = parseMinioConfig()
