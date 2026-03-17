@@ -6,6 +6,9 @@ resources:
   - secrets/database-secret.yaml
   - secrets/s3-secret.yaml
   - ingress.yaml
+  - rbac/serviceaccounts.yaml
+  - rbac/roles.yaml
+  - rbac/rolebindings.yaml
   - database/
   - backend/
   - frontend/

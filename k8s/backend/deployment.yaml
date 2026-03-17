@@ -5,7 +5,7 @@ metadata:
   labels:
     app: demo-backend
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: demo-backend
@@ -14,6 +14,7 @@ spec:
       labels:
         app: demo-backend
     spec:
+      serviceAccountName: job-runner
       imagePullSecrets:
       - name: ghcr-secret
       containers:
