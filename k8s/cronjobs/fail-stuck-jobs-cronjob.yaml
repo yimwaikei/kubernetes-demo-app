@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: fail-stuck-jobs
+  namespace: demo
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          imagePullSecrets:
+          - name: ghcr-secret
+          containers:
+            - name: fail-stuck-jobs-container
+              image: ghcr.io/yimwaikei/demo-kubernetes-scripts:demo
+              imagePullPolicy: Always
+              command: ["python", "fail_stuck_jobs.py"]
+              env:
+                - name: DB_HOST
+                  value: "postgres"
+                - name: DB_PORT
+                  value: "5432"
+                - name: DB_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: database-secret
+                      key: POSTGRES_USER
+                - name: DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: database-secret
+                      key: POSTGRES_PASSWORD
+                - name: DB_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: database-secret
+                      key: POSTGRES_DB
+                - name: JOB_TIMEOUT
+                  value: "15"
+          restartPolicy: OnFailure

@@ -13,3 +13,4 @@ resources:
   - backend/
   - frontend/
   - s3/
+  - cronjobs/fail-stuck-jobs-cronjob.yaml
