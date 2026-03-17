@@ -58,3 +58,13 @@ spec:
                 configMapKeyRef:
                   name: backend-config
                   key: MINIO_DEFAULT_BUCKET
+            - name: K8S_NAMESPACE
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: K8S_NAMESPACE
+            - name: TRANSFORM_IMAGE_DOCKER_IMAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: TRANSFORM_IMAGE_DOCKER_IMAGE
