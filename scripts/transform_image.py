@@ -22,6 +22,23 @@ def get_db_connection():
         password=os.getenv("DB_PASSWORD")
     )
 
+def log_error(record_id, message):
+    try:
+        if not record_id:
+            print(f"[LOG ERROR] {message}")
+            return
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute(
+            "UPDATE jobs SET error = %s WHERE id = %s;",
+            (message, record_id)
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        print(f"Failed to log error for record {record_id}: {e}")
+
 def update_status(record_id, new_status):
     try:
         conn = get_db_connection()
@@ -54,7 +71,7 @@ def update_status(record_id, new_status):
         conn.close()
 
     except Exception as e:
-        print(f"Failed to update status for record {record_id}: {e}")
+        raise RuntimeError(f"Failed to update status: {e}")
 
 def fetch_record(record_id):
     conn = get_db_connection()
@@ -153,16 +170,11 @@ def main():
     try:
         record = fetch_record(record_id)
         if not record:
-            print(f"No record found with id={record_id}")
-            update_status(record_id, JobStatus.FAILED)
-            sys.exit(0)
+            raise ValueError(f"No record found with id={record_id}")
 
         file_path = get_file_path(record)
         if not file_path:
-            print(f"No filePath in metadata for record {record_id}")
-            update_status(record_id, JobStatus.FAILED)
-            sys.exit(0)
-
+            raise ValueError(f"No filePath in metadata for record {record_id}")
 
         bucket, object_name = parse_minio_path(file_path)
         file_bytes = download_from_minio(bucket, object_name)
@@ -174,7 +186,7 @@ def main():
         update_status(record_id, JobStatus.COMPLETED)
 
     except Exception as e:
-        print(f"Error during job execution: {e}")
+        log_error(record_id, f"Job failed: {e}")
         update_status(record_id, JobStatus.FAILED)
         sys.exit(1)
 
