@@ -2,9 +2,11 @@ package com.example.demo.service
 
 import com.example.demo.config.MinioConfig
 import io.minio.BucketExistsArgs
+import io.minio.GetPresignedObjectUrlArgs
 import io.minio.MakeBucketArgs
 import io.minio.MinioClient
 import io.minio.PutObjectArgs
+import io.minio.http.Method
 import jakarta.annotation.PostConstruct
 import org.apache.coyote.BadRequestException
 import org.springframework.stereotype.Service
@@ -41,6 +43,24 @@ class FileService(
     fun uploadFile(file: MultipartFile): String {
         if (!(isFileImage(file))) throw IllegalArgumentException("File image is invalid")
         return uploadToMinio(file)
+    }
+
+    fun generatePresignedUrl(filePath: String, expiresSeconds: Int = 300): String {
+        if (filePath == "") throw NoSuchElementException("File does not exist")
+        val parts = filePath.split("/", limit = 2)
+        if (parts.size != 2) throw IllegalArgumentException("Invalid MinIO path: $filePath")
+
+        val bucket = parts[0]
+        val objectName = parts[1]
+
+        val args = GetPresignedObjectUrlArgs.builder()
+            .method(Method.GET)
+            .bucket(bucket)
+            .`object`(objectName)
+            .expiry(expiresSeconds)
+            .build()
+
+        return minioClient.getPresignedObjectUrl(args)
     }
 
     private fun isFileImage(file: MultipartFile): Boolean {

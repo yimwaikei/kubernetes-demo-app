@@ -2,7 +2,9 @@ package com.example.demo.controller
 
 import com.example.demo.dto.CreateJobRequest
 import com.example.demo.dto.CreateJobResponse
+import com.example.demo.dto.FileDto
 import com.example.demo.dto.JobDto
+import com.example.demo.service.FileService
 import com.example.demo.service.JobService
 import org.apache.coyote.BadRequestException
 import org.springframework.data.domain.Page
@@ -16,7 +18,8 @@ import java.util.*
 @RestController
 @RequestMapping("/api/v1/jobs")
 class JobController(
-    private val jobService: JobService
+    private val jobService: JobService,
+    private val fileService: FileService,
 ) {
     @GetMapping(
         produces = [MediaType.APPLICATION_JSON_VALUE]
@@ -36,6 +39,21 @@ class JobController(
     fun getJobById(@PathVariable id: UUID): ResponseEntity<JobDto> {
         val job = jobService.findById(id)
         return ResponseEntity.ok(job)
+    }
+
+    @GetMapping("/{id}/download", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getJobProcessedFileUrl(
+        @PathVariable id: UUID,
+        @RequestParam("processed") processed: Boolean = false,
+    ): ResponseEntity<FileDto> {
+        val job = jobService.findById(id)
+        val filePath = job.getMetadata()[if (processed) "processedFilePath" else "filePath"]?.toString() ?: ""
+        val downloadUrl = fileService.generatePresignedUrl(filePath)
+        return ResponseEntity.ok(
+            FileDto(
+                filePath = downloadUrl
+            )
+        )
     }
 
     @PostMapping(
