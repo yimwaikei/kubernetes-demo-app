@@ -16,3 +16,7 @@ export interface JobList {
   content: Job[];
   page: Pagination;
 }
+
+export interface CreateJobResponse {
+  id: string;
+}

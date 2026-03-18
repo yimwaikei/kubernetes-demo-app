@@ -21,8 +21,8 @@ function AppLayout() {
               label: "About",
             },
             {
-                key: "/upload-image",
-                label: "Upload Image",
+              key: "/upload-image",
+              label: "Upload Image",
             },
             {
               key: "/job-listing",

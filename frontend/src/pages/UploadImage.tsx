@@ -1,12 +1,16 @@
 import { UploadOutlined } from "@ant-design/icons";
-import { Upload, Button, message } from "antd";
+import { Upload, Button, message, Input, Typography, Space } from "antd";
 import type { RcFile, UploadFile } from "antd/es/upload/interface";
 import { useState } from "react";
 import { uploadFile } from "../services/FileService";
+import type { UploadFileResponse } from "../models/file";
+import { createJob } from "../services/JobService";
+import type { CreateJobResponse } from "../models/job";
 
 function UploadImage() {
   const [fileList, setFileList] = useState<UploadFile<RcFile>[]>([]);
   const [loading, setLoading] = useState(false);
+  const [filePath, setFilePath] = useState<string>();
 
   const beforeUpload = (file: RcFile) => {
     const isValidType = file.type === "image/png" || file.type === "image/jpeg";
@@ -25,10 +29,11 @@ function UploadImage() {
 
     setLoading(true);
     try {
-      await uploadFile(fileObj);
+      const res: UploadFileResponse = await uploadFile(fileObj);
       message.success("Upload successful!");
 
-      setFileList([]);
+      setFileList([])
+      setFilePath(res.filePath);
     } catch (err) {
       message.error("Upload failed");
       console.error(err);
@@ -36,6 +41,21 @@ function UploadImage() {
       setLoading(false);
     }
   };
+
+  const handleRunJob = async () => {
+    if (!filePath) return;
+
+    setLoading(true);
+    try {
+      const res: CreateJobResponse = await createJob(filePath);
+      message.success(`Job ${res.id} created successfully!`);
+    } catch (err) {
+      message.error("Fail to create job");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div>
@@ -53,6 +73,15 @@ function UploadImage() {
         <Button onClick={handleUpload} loading={loading}>
           Upload to Server
         </Button>
+      )}
+      {filePath && (
+        <div>
+          <Space orientation="vertical" size="middle" style={{ width: "100%" }}>
+            <Typography.Title level={5}>File Path:</Typography.Title>
+            <Input value={filePath} />
+            <Button onClick={handleRunJob}>Run Job</Button>
+          </Space>
+        </div>
       )}
     </div>
   );
