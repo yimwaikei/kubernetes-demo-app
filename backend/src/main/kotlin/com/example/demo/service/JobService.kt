@@ -8,6 +8,7 @@ import com.example.demo.model.Job
 import com.example.demo.repository.JobRepository
 import org.springframework.stereotype.Service
 import tools.jackson.module.kotlin.jacksonObjectMapper
+import tools.jackson.module.kotlin.readValue
 import java.util.UUID
 
 @Service
@@ -51,6 +52,9 @@ class JobService(
 
     private fun mapJobToJobDto(job: Job): JobDto {
         val statusEnum = JobStatus.fromCode(job.status ?: 0)
+        val mapper = jacksonObjectMapper()
+
+        val metadata = mapper.readValue<Map<String, Any>>(job.metadata ?: "{}")
         return JobDto(
             id = job.id,
             name = job.name,
@@ -59,6 +63,7 @@ class JobService(
             endAt = job.endAt,
             createdAt = job.createdAt,
             error = job.error,
+            metadata = metadata,
         )
     }
 }
