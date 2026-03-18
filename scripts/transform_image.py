@@ -156,6 +156,33 @@ def upload_to_minio(bucket, object_name, data_bytes):
 
     print(f"Uploaded transformed file to {bucket}/{object_name}")
 
+def update_record_to_complete(record_id, processed_filepath):
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        query = """
+            UPDATE jobs
+            SET status = %s,
+                end_at = NOW(),
+                metadata = jsonb_set(
+                    metadata,
+                    '{processedFilePath}',
+                    to_jsonb(%s::text),
+                    true
+                )
+            WHERE id = %s;
+        """
+
+        cur.execute(query, (JobStatus.COMPLETED, processed_filepath, record_id))
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+    except Exception as e:
+        raise RuntimeError(f"Failed to update status: {e}")
+
 def main():
     record_id = os.getenv("RECORD_ID")
     if len(sys.argv) > 1:
@@ -180,10 +207,10 @@ def main():
         file_bytes = download_from_minio(bucket, object_name)
         transformed_bytes = transform_file(file_bytes)
         filename, ext = os.path.splitext(object_name)
-        new_object = f"{filename}-grayscale{ext}"
+        new_object = f"processed/{filename}-grayscale{ext}"
         upload_to_minio(bucket, new_object, transformed_bytes)
 
-        update_status(record_id, JobStatus.COMPLETED)
+        update_record_to_complete(record_id, f"{bucket}/{new_object}")
 
     except Exception as e:
         log_error(record_id, f"Job failed: {e}")
