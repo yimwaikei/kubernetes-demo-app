@@ -6,19 +6,42 @@ import com.example.demo.dto.JobDto
 import com.example.demo.kubernetes.K8sJobComponent
 import com.example.demo.model.Job
 import com.example.demo.repository.JobRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import tools.jackson.module.kotlin.jacksonObjectMapper
 import tools.jackson.module.kotlin.readValue
-import java.util.UUID
+import java.util.*
 
 @Service
 class JobService(
     private val jobRepository: JobRepository,
     private val k8sJobComponent: K8sJobComponent
 ) {
+    fun findByName(
+        name: String,
+        pageNumber: Int = 0,
+        pageSize: Int = 10,
+        sortOrder: String = "DESC",
+        sortBy: String = "created_at"
+    ): Page<JobDto> {
+        val direction = Sort.Direction
+            .fromOptionalString(sortOrder.uppercase())
+            .orElseGet { Sort.Direction.DESC }
 
-    fun findByName(name: String): List<JobDto> {
-        return jobRepository.findByName(name).map { job -> mapJobToJobDto(job) }
+        val allowedSortFields = setOf("createdAt", "startAt", "endAt")
+
+        val safeSortBy = if (sortBy in allowedSortFields) sortBy else "createdAt"
+
+        val pageable = PageRequest.of(
+            pageNumber,
+            pageSize,
+            Sort.by(direction, safeSortBy)
+        )
+
+        return jobRepository.findByName(name, pageable)
+            .map(::mapJobToJobDto)
     }
 
     fun createTransformImageJob(filePath: String): UUID? {
