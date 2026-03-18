@@ -19,6 +19,12 @@ class JobService(
     private val jobRepository: JobRepository,
     private val k8sJobComponent: K8sJobComponent
 ) {
+    fun findById(id: UUID): JobDto {
+        return jobRepository.findById(id)
+            .map(this::mapJobToJobDto)
+            .orElseThrow { NoSuchElementException("Job not found: $id") }
+    }
+
     fun findByName(
         name: String,
         pageNumber: Int = 0,
@@ -41,7 +47,7 @@ class JobService(
         )
 
         return jobRepository.findByName(name, pageable)
-            .map(::mapJobToJobDto)
+            .map(this::mapJobToJobDto)
     }
 
     fun createTransformImageJob(filePath: String): UUID? {
