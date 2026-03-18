@@ -44,6 +44,7 @@ function JobListing() {
       title: 'Error',
       dataIndex: 'error',
       key: 'error',
+      width: 250,
     },
   ];
 
@@ -72,6 +73,7 @@ function JobListing() {
         columns={columns}
         rowKey="id"
         loading={loading}
+        tableLayout="fixed"
         pagination={{
           current: pageNumber,
           pageSize: pageSize,
