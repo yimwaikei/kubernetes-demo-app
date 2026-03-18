@@ -1,3 +1,5 @@
+import type { Pagination } from "./pagination";
+
 export interface Job {
   id: string;
   name: string;
@@ -6,4 +8,11 @@ export interface Job {
   startAt?: string | null;
   endAt?: string | null;
   createdAt: string;
+  error?: string | null;
+  filePath?: string | null;
+}
+
+export interface JobList {
+  content: Job[];
+  page: Pagination;
 }
