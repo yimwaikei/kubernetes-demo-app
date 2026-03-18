@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchJobsByName } from "../services/JobService";
+import { getJobsByName } from "../services/JobService";
 import type { JobList } from "../models/job";
 import { Table } from "antd";
 
@@ -48,10 +48,18 @@ function JobListing() {
   ];
 
   useEffect(() => {
-    setLoading(true);
-    fetchJobsByName("TRANSFORM_IMAGE", pageNumber, pageSize)
-      .then(setJobList)
-      .finally(() => setLoading(false));
+    const fetchJobs = async () => {
+      try {
+        setLoading(true);
+        const jobs = await getJobsByName("TRANSFORM_IMAGE", pageNumber, pageSize);
+        setJobList(jobs);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchJobs();
   }, [pageNumber, pageSize]);
 
   if (loading) return <p>Loading...</p>;
