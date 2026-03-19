@@ -11,3 +11,8 @@ export async function uploadFileApi(file: File): Promise<Response> {
 
   return res;
 }
+
+export async function getListOfFilesApi(folder: string): Promise<Response> {
+  const params = new URLSearchParams({ folder });
+  return await fetch(`${API_BASE}/api/v1/files?${params.toString()}`);
+}

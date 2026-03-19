@@ -28,6 +28,10 @@ function AppLayout() {
               key: "/job-listing",
               label: "Job History",
             },
+            {
+              key: "/file-listing",
+              label: "Processed Files"
+            }
           ]}
         />
       </Sider>
