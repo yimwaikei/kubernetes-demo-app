@@ -64,4 +64,12 @@ class JobController(
         val id = jobService.createTransformImageJob(request.filePath) ?: throw BadRequestException("Fail to create job")
         return ResponseEntity.ok(CreateJobResponse(id))
     }
+
+    @PostMapping("/{id}/rerun", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun rerunJob(@PathVariable id: UUID): ResponseEntity<CreateJobResponse> {
+        val job = jobService.findById(id)
+        val id = jobService.createTransformImageJob(job.getMetadata()["filePath"]?.toString() ?: "")
+            ?: throw BadRequestException("Fail to create job")
+        return ResponseEntity.ok(CreateJobResponse(id))
+    }
 }
