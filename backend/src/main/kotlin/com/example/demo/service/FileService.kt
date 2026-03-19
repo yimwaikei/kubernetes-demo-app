@@ -1,8 +1,10 @@
 package com.example.demo.service
 
 import com.example.demo.config.MinioConfig
+import com.example.demo.dto.FileDto
 import io.minio.BucketExistsArgs
 import io.minio.GetPresignedObjectUrlArgs
+import io.minio.ListObjectsArgs
 import io.minio.MakeBucketArgs
 import io.minio.MinioClient
 import io.minio.PutObjectArgs
@@ -61,6 +63,34 @@ class FileService(
             .build()
 
         return minioClient.getPresignedObjectUrl(args)
+    }
+
+    fun listOfFilesInFolder(folderPath: String): List<FileDto> {
+        val normalizedPrefix = folderPath
+            .trim('/')
+            .let { if (it.isEmpty()) "" else "$it/" }
+
+        return minioClient.listObjects(
+            ListObjectsArgs.builder()
+                .bucket(minioConfig.defaultBucket)
+                .prefix(normalizedPrefix)
+                .recursive(false)
+                .build()
+        )
+            .asSequence()
+            .mapNotNull { result ->
+                val item = result.get()
+
+                if (item.isDir) return@mapNotNull null
+
+                val objectName = item.objectName()
+
+                FileDto(
+                    filePath = "${minioConfig.defaultBucket}/$objectName",
+                    fileName = objectName.substringAfterLast("/")
+                )
+            }
+            .toList()
     }
 
     private fun isFileImage(file: MultipartFile): Boolean {
