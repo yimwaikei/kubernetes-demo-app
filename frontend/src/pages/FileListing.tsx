@@ -35,7 +35,7 @@ function FileListing() {
     {
       title: "Index",
       key: "index",
-      render: (_: any, __: FileDto, rowIndex: number) => rowIndex + 1,
+      render: (_: FileDto, __: FileDto, rowIndex: number) => rowIndex + 1,
       width: 150,
     },
     {

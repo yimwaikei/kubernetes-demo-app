@@ -16,3 +16,11 @@ export async function createJobApi(filePath: string): Promise<Response> {
 
   return res;
 }
+
+export async function rerunJobApi(id: string): Promise<Response> {
+    const res = await fetch(`${API_BASE}/api/v1/jobs/${id}/rerun`, {
+    method: "POST",
+  });
+
+  return res;
+}

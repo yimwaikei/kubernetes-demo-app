@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { getJobsByName } from "../services/JobService";
-import type { JobList } from "../models/job";
-import { Table } from "antd";
+import { getJobsByName, rerunJob } from "../services/JobService";
+import type { Job, JobList } from "../models/job";
+import { Button, message, Table } from "antd";
 
 function JobListing() {
   const [jobList, setJobList] = useState<JobList>();
@@ -9,7 +9,32 @@ function JobListing() {
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
+  const handleRerun = async (record: Job) => {
+    if (!record) return;
+
+    setLoading(true);
+    try {
+      await rerunJob(record.id);
+
+      // reset page to default values to refresh table to show latest job
+      setPageNumber(1)
+      setPageSize(10)
+      message.success("Triggered job rerun");
+    } catch (err) {
+      message.error("Rerun failed");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const columns = [
+    {
+      title: "Index",
+      key: "index",
+      render: (_: Job, __: Job, rowIndex: number) => rowIndex + 1,
+      width: 100,
+    },
     {
       title: 'ID',
       dataIndex: 'id',
@@ -46,6 +71,23 @@ function JobListing() {
       key: 'error',
       width: 250,
     },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (record: Job) => (
+        <span>
+          {record.status == 'Failed' &&
+            <Button
+              type="primary"
+              onClick={() => handleRerun(record)}
+              style={{ marginRight: 8 }}
+            >
+              Rerun
+            </Button>
+          }
+        </span>
+      ),
+    }
   ];
 
   useEffect(() => {
