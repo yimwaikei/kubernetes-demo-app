@@ -1,11 +1,35 @@
 import { useEffect, useState } from "react";
-import { Table } from "antd";
+import { Button, message, Table } from "antd";
 import type { FileDto, FileDtoList } from "../models/file";
-import { getListOfProcessedFiles } from "../services/FileService";
+import { downloadFile, getListOfProcessedFiles } from "../services/FileService";
 
 function FileListing() {
   const [fileList, setFileList] = useState<FileDtoList>();
   const [loading, setLoading] = useState(true);
+
+  const handleDownload = async (record: FileDto) => {
+    if (!record) return;
+
+    setLoading(true);
+    try {
+      const res: FileDto = await downloadFile(record.filePath);
+
+      const link = document.createElement("a");
+      link.href = res.filePath;
+      link.download = res.filePath;
+      link.target = "_blank";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      message.success("Download successful!");
+    } catch (err) {
+      message.error("Download failed");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const columns = [
     {
@@ -19,6 +43,21 @@ function FileListing() {
       dataIndex: 'fileName',
       key: 'fileName',
     },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (record: FileDto) => (
+        <span>
+          <Button
+            type="primary"
+            onClick={() => handleDownload(record)}
+            style={{ marginRight: 8 }}
+          >
+            Download
+          </Button>
+        </span>
+      ),
+    }
   ];
 
   useEffect(() => {

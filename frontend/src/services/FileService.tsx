@@ -1,5 +1,5 @@
-import { getListOfFilesApi, uploadFileApi } from "../api/FileApi";
-import type { FileDtoList, UploadFileResponse } from "../models/file";
+import { downloadFileApi, getListOfFilesApi, uploadFileApi } from "../api/FileApi";
+import type { FileDto, FileDtoList, UploadFileResponse } from "../models/file";
 
 export async function uploadFile(file: File): Promise<UploadFileResponse> {
   if (!file) throw new Error("No file provided");
@@ -11,8 +11,15 @@ export async function uploadFile(file: File): Promise<UploadFileResponse> {
 }
 
 export async function getListOfProcessedFiles(): Promise<FileDtoList> {
-    const res = await getListOfFilesApi("processed");
-  
-    if (!res.ok) throw new Error("Files not found");
-    return res.json() as Promise<FileDtoList>;
+  const res = await getListOfFilesApi("processed");
+
+  if (!res.ok) throw new Error("Files not found");
+  return res.json() as Promise<FileDtoList>;
+}
+
+export async function downloadFile(filePath: string): Promise<FileDto> {
+  const res = await downloadFileApi(filePath);
+
+  if (!res.ok) throw new Error("Files not found");
+  return res.json() as Promise<FileDto>;
 }
