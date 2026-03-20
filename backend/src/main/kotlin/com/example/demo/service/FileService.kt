@@ -1,18 +1,19 @@
 package com.example.demo.service
 
 import com.example.demo.config.MinioConfig
+import com.example.demo.dto.FileDownloadResponse
 import com.example.demo.dto.FileDto
 import io.minio.BucketExistsArgs
-import io.minio.GetPresignedObjectUrlArgs
+import io.minio.GetObjectArgs
 import io.minio.ListObjectsArgs
 import io.minio.MakeBucketArgs
 import io.minio.MinioClient
 import io.minio.PutObjectArgs
-import io.minio.http.Method
 import jakarta.annotation.PostConstruct
 import org.apache.coyote.BadRequestException
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import java.io.InputStream
 import java.time.Instant
 
 @Service
@@ -47,22 +48,26 @@ class FileService(
         return uploadToMinio(file)
     }
 
-    fun generatePresignedUrl(filePath: String, expiresSeconds: Int = 300): String {
-        if (filePath == "") throw NoSuchElementException("File does not exist")
+    fun downloadFile(filePath: String): FileDownloadResponse {
+        if (filePath.isEmpty()) throw NoSuchElementException("File does not exist")
+
         val parts = filePath.split("/", limit = 2)
         if (parts.size != 2) throw IllegalArgumentException("Invalid MinIO path: $filePath")
 
         val bucket = parts[0]
         val objectName = parts[1]
 
-        val args = GetPresignedObjectUrlArgs.builder()
-            .method(Method.GET)
-            .bucket(bucket)
-            .`object`(objectName)
-            .expiry(expiresSeconds)
-            .build()
+        val stream = minioClient.getObject(
+            GetObjectArgs.builder()
+                .bucket(bucket)
+                .`object`(objectName)
+                .build()
+        )
 
-        return minioClient.getPresignedObjectUrl(args)
+        return FileDownloadResponse(
+            stream = stream,
+            fileName = objectName.substringAfterLast("/"),
+        )
     }
 
     fun listOfFilesInFolder(folderPath: String): List<FileDto> {

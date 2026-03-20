@@ -2,11 +2,11 @@ package com.example.demo.controller
 
 import com.example.demo.dto.CreateJobRequest
 import com.example.demo.dto.CreateJobResponse
-import com.example.demo.dto.FileDto
 import com.example.demo.dto.JobDto
 import com.example.demo.service.FileService
 import com.example.demo.service.JobService
 import org.apache.coyote.BadRequestException
+import org.springframework.core.io.InputStreamResource
 import org.springframework.data.domain.Page
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -41,19 +41,20 @@ class JobController(
         return ResponseEntity.ok(job)
     }
 
-    @GetMapping("/{id}/download", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("/{id}/download")
     fun getJobProcessedFileUrl(
         @PathVariable id: UUID,
         @RequestParam("processed") processed: Boolean = false,
-    ): ResponseEntity<FileDto> {
+    ): ResponseEntity<InputStreamResource> {
         val job = jobService.findById(id)
         val filePath = job.getMetadata()[if (processed) "processedFilePath" else "filePath"]?.toString() ?: ""
-        val downloadUrl = fileService.generatePresignedUrl(filePath)
-        return ResponseEntity.ok(
-            FileDto(
-                filePath = downloadUrl
-            )
-        )
+
+        val file = fileService.downloadFile(filePath)
+
+        return ResponseEntity.ok()
+            .header("Content-Disposition", "attachment; filename=\"${file.fileName}\"")
+            .contentType(MediaType.parseMediaType(file.contentType))
+            .body(InputStreamResource(file.stream))
     }
 
     @PostMapping(

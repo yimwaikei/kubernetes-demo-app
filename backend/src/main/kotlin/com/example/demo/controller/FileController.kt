@@ -6,6 +6,8 @@ import com.example.demo.dto.ListOfFilesResponse
 import com.example.demo.service.FileService
 import com.example.demo.service.JobService
 import io.minio.MinioClient
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.core.io.InputStreamResource
 import org.springframework.data.domain.Page
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -40,15 +42,15 @@ class FileController(
         return ResponseEntity.status(HttpStatus.OK).body(ListOfFilesResponse(files))
     }
 
-    @GetMapping("/download", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("/download")
     fun getDownloadUrl(
         @RequestParam("filePath") filePath: String = "",
-    ): ResponseEntity<FileDto> {
-        val downloadUrl = fileService.generatePresignedUrl(filePath)
-        return ResponseEntity.ok(
-            FileDto(
-                filePath = downloadUrl
-            )
-        )
+    ): ResponseEntity<InputStreamResource> {
+        val file = fileService.downloadFile(filePath)
+
+        return ResponseEntity.ok()
+            .header("Content-Disposition", "attachment; filename=\"${file.fileName}\"")
+            .contentType(MediaType.parseMediaType(file.contentType))
+            .body(InputStreamResource(file.stream))
     }
 }
