@@ -12,15 +12,7 @@ function FileListing() {
 
     setLoading(true);
     try {
-      const res: FileDto = await downloadFile(record.filePath);
-
-      const link = document.createElement("a");
-      link.href = res.filePath;
-      link.download = res.filePath;
-      link.target = "_blank";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      await downloadFile(record.filePath);
 
       message.success("Download successful!");
     } catch (err) {
