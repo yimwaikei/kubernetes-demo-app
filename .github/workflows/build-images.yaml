@@ -1,11 +1,11 @@
-name: Build and Push Images
+name: Build, Push Images & Update K8s
 
 on:
   push:
     branches: ["main"]
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 env:
@@ -45,12 +45,15 @@ jobs:
           - name: backend
             path: backend
             image: demo-kubernetes-backend
+            k8s_files: k8s/backend/configmap.yaml,k8s/backend/deployment.yaml
           - name: frontend
             path: frontend
             image: demo-kubernetes-frontend
+            k8s_files: k8s/frontend/deployment.yaml
           - name: scripts
             path: scripts
             image: demo-kubernetes-scripts
+            k8s_files: k8s/scripts/fail-stuck-jobs-cronjob.yaml
 
     steps:
       - uses: actions/checkout@v4
@@ -62,10 +65,37 @@ jobs:
           (matrix.name == 'scripts' && needs.detect-changes.outputs.scripts == 'true')
         run: |
           IMAGE=$REGISTRY/$USERNAME/${{ matrix.image }}
-          SHA_TAG=${{ github.sha }}
+          SHA_TAG=${GITHUB_SHA}
 
           echo "${{ secrets.GHCR_TOKEN }}" | docker login $REGISTRY -u $USERNAME --password-stdin
 
           docker build -f ./${{ matrix.path }}/Dockerfile -t $IMAGE:$SHA_TAG ./${{ matrix.path}}
 
           docker push $IMAGE:$SHA_TAG
+
+      - name: Update K8s manifests with SHA_TAG
+        if: |
+          (matrix.name == 'backend' && needs.detect-changes.outputs.backend == 'true') ||
+          (matrix.name == 'frontend' && needs.detect-changes.outputs.frontend == 'true') ||
+          (matrix.name == 'scripts' && needs.detect-changes.outputs.scripts == 'true')
+        run: |
+          SHA_TAG=${GITHUB_SHA}
+          IFS=',' read -ra FILES <<< "${{ matrix.k8s_files }}"
+
+          for file in "${FILES[@]}"; do
+            echo "Updating $file..."
+            sed -i "s#image: ghcr.io/$USERNAME/${{ matrix.image }}:.*#image: ghcr.io/$USERNAME/${{ matrix.image }}:$SHA_TAG#" "$file"
+          done
+
+      - name: Commit updated K8s manifests
+        if: |
+          (matrix.name == 'backend' && needs.detect-changes.outputs.backend == 'true') ||
+          (matrix.name == 'frontend' && needs.detect-changes.outputs.frontend == 'true') ||
+          (matrix.name == 'scripts' && needs.detect-changes.outputs.scripts == 'true')
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          IFS=',' read -ra FILES <<< "${{ matrix.k8s_files }}"
+          git add "${FILES[@]}"
+          git commit -m "Update K8s manifests for ${{ matrix.name }} image to SHA $SHA_TAG" || echo "No changes to commit"
+          git push origin HEAD:main
