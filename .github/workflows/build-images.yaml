@@ -1,0 +1,71 @@
+name: Build and Push Images
+
+on:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  USERNAME: yimwaikei
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+      scripts: ${{ steps.filter.outputs.scripts }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect changed paths
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+            frontend:
+              - 'frontend/**'
+            scripts:
+              - 'scripts/**'
+
+  build:
+    needs: detect-changes
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - name: backend
+            path: backend
+            image: demo-kubernetes-backend
+          - name: frontend
+            path: frontend
+            image: demo-kubernetes-frontend
+          - name: scripts
+            path: scripts
+            image: demo-kubernetes-scripts
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build & Push Docker Image
+        if: |
+          (matrix.name == 'backend' && needs.detect-changes.outputs.backend == 'true') ||
+          (matrix.name == 'frontend' && needs.detect-changes.outputs.frontend == 'true') ||
+          (matrix.name == 'scripts' && needs.detect-changes.outputs.scripts == 'true')
+        run: |
+          IMAGE=$REGISTRY/$USERNAME/${{ matrix.image }}
+          SHA_TAG=${{ github.sha }}
+
+          echo "${{ secrets.GHCR_TOKEN }}" | docker login $REGISTRY -u $USERNAME --password-stdin
+
+          docker build -f ./${{ matrix.path }}/Dockerfile -t $IMAGE:$SHA_TAG ./${{ matrix.path}}
+
+          docker push $IMAGE:$SHA_TAG
