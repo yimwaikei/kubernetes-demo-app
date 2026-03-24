@@ -1,0 +1,5 @@
+apiVersion: v2
+name: kubernetes-demo-app
+description: Kubernetes Demo App Deployment using Helm
+version: 0.1.0
+type: application
