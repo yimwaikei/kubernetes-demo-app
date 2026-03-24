@@ -1,0 +1,15 @@
+postgresqlUsername: myuser
+postgresqlPassword: mypassword
+postgresqlDatabase: mydatabase
+
+image:
+  repository: postgres
+  tag: "17"
+
+service:
+  port: 5432
+
+persistence:
+  size: 1Gi
+
+replicas: 1
