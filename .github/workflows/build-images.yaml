@@ -84,7 +84,7 @@ jobs:
 
           for file in "${FILES[@]}"; do
             echo "Updating $file..."
-            sed -i "s#image: ghcr.io/$USERNAME/${{ matrix.image }}:.*#image: ghcr.io/$USERNAME/${{ matrix.image }}:$SHA_TAG#" "$file"
+            sed -i "s#ghcr.io/$USERNAME/${{ matrix.image }}:.*#ghcr.io/$USERNAME/${{ matrix.image }}:$SHA_TAG#" "$file"
           done
 
       - name: Commit updated K8s manifests
