@@ -189,7 +189,7 @@ def main():
         record_id = sys.argv[1]
 
     if not record_id:
-        print("RECORD_ID not provided!")
+        print("RECORD_ID not provided")
         sys.exit(1)
 
     update_status(record_id, JobStatus.RUNNING)
