@@ -7,4 +7,4 @@ data:
   MINIO_ENDPOINT: http://minio:9000
   MINIO_DEFAULT_BUCKET: test-bucket
   K8S_NAMESPACE: demo
-  TRANSFORM_IMAGE_DOCKER_IMAGE: ghcr.io/yimwaikei/demo-kubernetes-scripts:demo
+  TRANSFORM_IMAGE_DOCKER_IMAGE: ghcr.io/yimwaikei/demo-kubernetes-scripts:334c40ced6481dfa8acd1e025e7f8ad01fe5eccf

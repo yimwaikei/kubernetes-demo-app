@@ -13,7 +13,7 @@ spec:
           - name: ghcr-secret
           containers:
             - name: fail-stuck-jobs-container
-              image: ghcr.io/yimwaikei/demo-kubernetes-scripts:8a98ecf1937b8c2d114915d320a5e3bf3b155c3c
+              image: ghcr.io/yimwaikei/demo-kubernetes-scripts:334c40ced6481dfa8acd1e025e7f8ad01fe5eccf
               imagePullPolicy: Always
               command: ["python", "fail_stuck_jobs.py"]
               env:
