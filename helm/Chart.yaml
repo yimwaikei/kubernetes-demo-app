@@ -3,3 +3,19 @@ name: kubernetes-demo-app
 description: Kubernetes Demo App Deployment using Helm
 version: 0.1.0
 type: application
+dependencies:
+  - name: backend
+    version: 0.1.0
+    repository: "file://charts/backend"
+  - name: postgres
+    version: 0.1.0
+    repository: "file//charts/database"
+  - name: frontend
+    version: 0.1.0
+    repository: "file://charts/frontend"
+  - name: rbac
+    version: 0.1.0
+    repository: "file://charts/rbac"
+  - name: minio
+    version: 0.1.0
+    repository: "file://charts/s3"

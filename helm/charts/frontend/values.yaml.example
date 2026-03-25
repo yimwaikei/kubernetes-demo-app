@@ -1,0 +1,5 @@
+image:
+  repository: ghcr.io/yimwaikei/demo-kubernetes-frontend
+  tag: demo
+
+replicas: 1
