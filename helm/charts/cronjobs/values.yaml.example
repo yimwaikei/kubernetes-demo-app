@@ -1,0 +1,13 @@
+postgresql:
+  username: myuser
+  password: mypassword
+  database: mydatabase
+
+image:
+  repository: ghcr.io/yimwaikei/demo-kubernetes-scripts
+  tag: demo
+
+cronjob:
+  failStuckJobs:
+    schedule: "*/5 * * * *"
+    jobTimeout: "15"

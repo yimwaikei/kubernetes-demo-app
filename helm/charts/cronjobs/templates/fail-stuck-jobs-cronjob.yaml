@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}-fail-stuck-jobs
+spec:
+  schedule: "{{ .Values.cronjob.failStuckJobs.schedule }}"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          imagePullSecrets:
+          - name: ghcr-secret
+          containers:
+            - name: fail-stuck-jobs-container
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+              imagePullPolicy: Always
+              command: ["python", "fail_stuck_jobs.py"]
+              env:
+                - name: DB_HOST
+                  value: "{{ .Release.Name }}-postgres"
+                - name: DB_PORT
+                  value: "5432"
+                - name: DB_USER
+                  value: {{ .Values.postgresql.username }}
+                - name: DB_PASSWORD
+                  value: {{ .Values.postgresql.password }}
+                - name: DB_NAME
+                  value: {{ .Values.postgresql.database }}
+                - name: JOB_TIMEOUT
+                  value: "{{ .Values.cronjob.failStuckJobs.jobTimeout }}"
+          restartPolicy: OnFailure

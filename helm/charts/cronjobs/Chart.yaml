@@ -1,0 +1,5 @@
+apiVersion: v2
+name: cronjobs
+description: Cron Jobs
+version: 0.1.0
+appVersion: "1.0"
