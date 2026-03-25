@@ -1,13 +1,11 @@
-postgresqlUsername: myuser
-postgresqlPassword: mypassword
-postgresqlDatabase: mydatabase
+postgresql:
+  username: myuser
+  password: mypassword
+  database: mydatabase
 
 image:
   repository: postgres
   tag: "17"
-
-service:
-  port: 5432
 
 persistence:
   size: 1Gi

@@ -1,6 +1,6 @@
-
-minioRootUser: minio99
-minioRootPassword: minio123
+minio:
+  username: minio99
+  password: minio123
 
 image:
   repository: minio/minio

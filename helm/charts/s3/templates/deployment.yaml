@@ -25,9 +25,9 @@ spec:
           - ":9001"
         env:
         - name: MINIO_ROOT_USER
-          value: {{ .Values.minioRootUser }}
+          value: {{ .Values.minio.username }}
         - name: MINIO_ROOT_PASSWORD
-          value: {{ .Values.minioRootPassword }}
+          value: {{ .Values.minio.password }}
         ports:
         - containerPort: 9000
         - containerPort: 9001
