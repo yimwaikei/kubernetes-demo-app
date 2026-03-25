@@ -10,6 +10,6 @@ minio:
 
 image: ghcr.io/yimwaikei/demo-kubernetes-backend:174415bb3dcd4f700585641a1b7a66657ab6296f
 
-jobImage: ghcr.io/yimwaikei/demo-kubernetes-scripts:demo
+jobImage: ghcr.io/yimwaikei/demo-kubernetes-scripts:b39ae977dab472c134dda2726b06be2c4f71f571
 
 replicas: 1
