@@ -3,9 +3,7 @@ postgresql:
   password: mypassword
   database: mydatabase
 
-image:
-  repository: ghcr.io/yimwaikei/demo-kubernetes-scripts
-  tag: demo
+image: ghcr.io/yimwaikei/demo-kubernetes-scripts:demo
 
 cronjob:
   failStuckJobs:

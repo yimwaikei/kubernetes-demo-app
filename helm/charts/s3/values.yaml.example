@@ -2,9 +2,7 @@ minio:
   username: minio99
   password: minio123
 
-image:
-  repository: minio/minio
-  tag: "latest"
+image: minio/minio:latest
 
 service:
   port: 5432

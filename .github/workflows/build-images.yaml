@@ -45,15 +45,23 @@ jobs:
           - name: backend
             path: backend
             image: demo-kubernetes-backend
-            k8s_files: k8s/backend/deployment.yaml
+            k8s_files: >-
+              k8s/backend/deployment.yaml,
+              helm/charts/backend/values.yaml.example
           - name: frontend
             path: frontend
             image: demo-kubernetes-frontend
-            k8s_files: k8s/frontend/deployment.yaml
+            k8s_files: >-
+              k8s/frontend/deployment.yaml,
+              helm/charts/frontend/values.yaml.example
           - name: scripts
             path: scripts
             image: demo-kubernetes-scripts
-            k8s_files: k8s/backend/configmap.yaml,k8s/cronjobs/fail-stuck-jobs-cronjob.yaml
+            k8s_files: >-
+              k8s/backend/configmap.yaml,
+              k8s/cronjobs/fail-stuck-jobs-cronjob.yaml,
+              helm/charts/backend/values.yaml.example,
+              helm/charts/cronjobs/values.yaml.example
 
     steps:
       - uses: actions/checkout@v4

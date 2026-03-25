@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: minio
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: "{{ .Values.image }}"
         imagePullPolicy: IfNotPresent
         args:
           - server

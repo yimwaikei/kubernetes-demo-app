@@ -19,7 +19,7 @@ spec:
       - name: ghcr-secret
       containers:
         - name: backend
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image }}"
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -42,4 +42,4 @@ spec:
             - name: K8S_NAMESPACE
               value: {{ .Release.Namespace }}
             - name: TRANSFORM_IMAGE_DOCKER_IMAGE
-              value: "{{ .Values.jobImage.repository }}:{{ .Values.jobImage.tag }}"
+              value: "{{ .Values.jobImage }}"

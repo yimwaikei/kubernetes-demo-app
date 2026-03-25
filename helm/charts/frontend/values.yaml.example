@@ -1,5 +1,3 @@
-image:
-  repository: ghcr.io/yimwaikei/demo-kubernetes-frontend
-  tag: demo
+image: ghcr.io/yimwaikei/demo-kubernetes-frontend:demo
 
 replicas: 1

@@ -3,9 +3,7 @@ postgresql:
   password: mypassword
   database: mydatabase
 
-image:
-  repository: postgres
-  tag: "17"
+image: postgres:17
 
 persistence:
   size: 1Gi
