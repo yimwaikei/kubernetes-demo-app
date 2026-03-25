@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-backend
+  labels:
+    app: {{ .Release.Name }}-backend
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-backend
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-backend
+    spec:
+      serviceAccountName: job-runner
+      imagePullSecrets:
+      - name: ghcr-secret
+      containers:
+        - name: backend
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_URL
+              value: {{ .Values.postgresql.url }}
+              value: jdbc:postgresql://{{ .Release.Name }}-postgres:5432/{{ .Values.postgresql.database }}
+            - name: DB_USERNAME
+              value: {{ .Values.postgresql.username }}
+            - name: DB_PASSWORD
+              value: {{ .Values.postgresql.password }}
+            - name: MINIO_ENDPOINT
+              value: http://{{ .Release.Name }}-minio:9000
+            - name: MINIO_USER
+              value: {{ .Values.minio.username }}
+            - name: MINIO_PASSWORD
+              value: {{ .Values.minio.password }}
+            - name: MINIO_DEFAULT_BUCKET
+              value: {{ .Values.minio.defaultBucket }}
+            - name: K8S_NAMESPACE
+              value: {{ .Release.Namespace }}
+            - name: TRANSFORM_IMAGE_DOCKER_IMAGE
+              value: "{{ .Values.jobImage.repository }}:{{ .Values.jobImage.tag }}"

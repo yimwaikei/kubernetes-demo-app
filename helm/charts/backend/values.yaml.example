@@ -1,0 +1,19 @@
+postgresql:
+  username: myuser
+  password: mypassword
+  database: mydatabase
+
+minio:
+  username: minio99
+  password: minio123
+  defaultBucket: test-bucket
+
+image:
+  repository: ghcr.io/yimwaikei/demo-kubernetes-backend
+  tag: demo
+
+jobImage:
+  repository: ghcr.io/yimwaikei/demo-kubernetes-scripts
+  tag: demo
+
+replicas: 1
