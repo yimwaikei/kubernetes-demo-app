@@ -19,7 +19,7 @@ spec:
       - name: ghcr-secret
       containers:
         - name: demo-backend
-          image: ghcr.io/yimwaikei/demo-kubernetes-backend:897a76686d458a20dfc24e32ee2f5a445155ad86
+          image: ghcr.io/yimwaikei/demo-kubernetes-backend:174415bb3dcd4f700585641a1b7a66657ab6296f
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
