@@ -1,0 +1,15 @@
+
+minioRootUser: minio99
+minioRootPassword: minio123
+
+image:
+  repository: minio/minio
+  tag: "latest"
+
+service:
+  port: 5432
+
+persistence:
+  size: 1Gi
+
+replicas: 1
