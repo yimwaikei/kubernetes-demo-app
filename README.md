@@ -18,6 +18,7 @@ A demonstration project showcasing full-stack development and DevOps skills. Thi
 - Docker
 - Kubernetes (via Minikube for local development)
 - Github Container Registry
+- Helm
 
 ### Data & Storage
 - PostgreSQL
@@ -37,6 +38,7 @@ These tools are required to run the project:
 - **Docker Desktop** (for containerization)
 - **Minikube** (local Kubernetes cluster; runs nodes as Docker containers)
 - **Python v3.14.3** (for scripting)
+- **Helm v4.1.3** (for managing Kubernetes Application)
 
 ## Tools (Optional / Helpful)
 
@@ -54,6 +56,7 @@ These tools can make development and testing easier:
 kubernetes-demo-app/
 ├── backend/ # Backend API service (Kotlin/Spring Boot/Maven)
 ├── frontend/ # Web application (React/TypeScript/Vite/Nginx)
+├── helm/ # Helm Charts
 ├── k8s/ # Kubernetes manifests
 ├── scripts/ # Scripts for jobs
 └── README.md
