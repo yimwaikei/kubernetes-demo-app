@@ -98,4 +98,5 @@ jobs:
           IFS=',' read -ra FILES <<< "${{ matrix.k8s_files }}"
           git add "${FILES[@]}"
           git commit -m "Update K8s manifests for ${{ matrix.name }} image to SHA $SHA_TAG" || echo "No changes to commit"
+          git pull --rebase origin main
           git push origin HEAD:main
