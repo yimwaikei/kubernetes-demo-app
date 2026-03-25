@@ -91,6 +91,7 @@ jobs:
           IFS=',' read -ra FILES <<< "${{ matrix.k8s_files }}"
 
           for file in "${FILES[@]}"; do
+            file=$(echo "$file" | tr -d ' ')
             echo "Updating $file..."
             sed -i "s#ghcr.io/$USERNAME/${{ matrix.image }}:.*#ghcr.io/$USERNAME/${{ matrix.image }}:$SHA_TAG#" "$file"
           done
