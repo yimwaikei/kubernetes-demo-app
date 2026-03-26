@@ -14,7 +14,7 @@ spec:
           containers:
             - name: fail-stuck-jobs-container
               image: ghcr.io/yimwaikei/demo-kubernetes-scripts:b39ae977dab472c134dda2726b06be2c4f71f571
-              imagePullPolicy: Always
+              imagePullPolicy: IfNotPresent
               command: ["python", "fail_stuck_jobs.py"]
               env:
                 - name: DB_HOST

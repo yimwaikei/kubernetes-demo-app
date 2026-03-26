@@ -108,7 +108,7 @@ class K8sJobComponent(
             .addNewContainer()
             .withName("python-job")
             .withImage(transformImageJobImage)
-            .withImagePullPolicy("Always")
+            .withImagePullPolicy("IfNotPresent")
             .withCommand("python", "transform_image.py")
 
             /* PostgreSQL */

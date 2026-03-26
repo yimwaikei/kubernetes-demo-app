@@ -20,7 +20,7 @@ spec:
       containers:
         - name: demo-backend
           image: ghcr.io/yimwaikei/demo-kubernetes-backend:09a8131e75c0c67c102a071c6f8841016bed2b7c
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           env:
