@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: demo-webflux
+  r2dbc:
+    url: ${DB_URL:r2dbc:postgresql://localhost:5432/mydatabase}
+    username: ${DB_USERNAME:myuser}
+    password: ${DB_PASSWORD:mypassword}
+  sql:
+    init:
+      mode: never
