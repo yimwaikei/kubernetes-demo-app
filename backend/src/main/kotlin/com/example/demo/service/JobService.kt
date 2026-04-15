@@ -6,6 +6,11 @@ import com.example.demo.dto.JobDto
 import com.example.demo.kubernetes.K8sJobComponent
 import com.example.demo.model.Job
 import com.example.demo.repository.JobRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -50,21 +55,27 @@ class JobService(
             .map(this::mapJobToJobDto)
     }
 
-    fun createTransformImageJob(filePath: String): UUID? {
-        val metadataMap: Map<String, Any> = mapOf("filePath" to filePath)
+     fun createTransformImageJob(filePath: String): UUID = runBlocking {
+         coroutineScope {
+            val metadataMap = mapOf("filePath" to filePath)
 
-        val jobId = createJobRecord(JobName.TRANSFORM_IMAGE.toString(), metadataMap)
-
-        if (jobId != null) {
-            try {
-                k8sJobComponent.triggerTransformImageJob(jobId.toString())
-            } catch (ex: Exception) {
-                println("Failed to trigger Kubernetes job for $jobId")
-                ex.printStackTrace()
+            val jobId = withContext(Dispatchers.IO) {
+                createJobRecord(JobName.TRANSFORM_IMAGE.toString(), metadataMap) ?: throw RuntimeException("Failed to create job record")
             }
-        }
 
-        return jobId
+            launch(Dispatchers.IO) {
+                try {
+                    k8sJobComponent.triggerTransformImageJob(jobId.toString())
+                } catch (ex: Exception) {
+                    println("Failed to trigger K8s job for $jobId")
+                    ex.printStackTrace()
+
+                    updateJobStatus(jobId, JobStatus.FAILED, "Failed to start job")
+                }
+            }
+
+            jobId
+        }
     }
 
     private fun createJobRecord(name: String, metadataMap: Map<String, Any>): UUID? {
@@ -77,6 +88,23 @@ class JobService(
                 metadata = metadataJson
             )
         ).id
+    }
+
+     fun updateJobStatus(
+        jobId: UUID,
+        status: JobStatus,
+        error: String? = null
+    ) {
+        val job: Job = jobRepository.findById(jobId)
+            .orElseThrow { IllegalArgumentException("Job not found: $jobId") }
+
+        job.status = status.code
+
+        if (status == JobStatus.FAILED) {
+            job.error = error
+        }
+
+        jobRepository.save(job)
     }
 
     private fun mapJobToJobDto(job: Job): JobDto {

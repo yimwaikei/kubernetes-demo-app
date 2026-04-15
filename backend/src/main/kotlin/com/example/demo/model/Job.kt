@@ -24,7 +24,7 @@ data class Job(
     val metadata: String? = null,
 
     @Column
-    val status: Short? = null,
+    var status: Short? = null,
 
     @Column(name = "start_at")
     val startAt: Instant? = null,
@@ -36,5 +36,5 @@ data class Job(
     val createdAt: Instant = Instant.now(),
 
     @Column(columnDefinition = "text")
-    val error: String? = null,
+    var error: String? = null,
 )
