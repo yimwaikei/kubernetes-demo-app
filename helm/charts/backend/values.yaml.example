@@ -8,7 +8,7 @@ minio:
   password: minio123
   defaultBucket: test-bucket
 
-image: ghcr.io/yimwaikei/demo-kubernetes-backend:957f78e076c2566e7b15fd11e5e4cd4c3b870ac5
+image: ghcr.io/yimwaikei/demo-kubernetes-backend:5e87fa43734648d2879b8bfb0d4ecbc691d4b26a
 
 jobImage: ghcr.io/yimwaikei/demo-kubernetes-scripts:b39ae977dab472c134dda2726b06be2c4f71f571
 
